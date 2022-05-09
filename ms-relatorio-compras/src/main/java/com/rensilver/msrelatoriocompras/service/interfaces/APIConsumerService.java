@@ -1,4 +1,4 @@
-package com.rensilver.msrelatoriocompras.service;
+package com.rensilver.msrelatoriocompras.service.interfaces;
 
 import com.rensilver.msrelatoriocompras.entity.Cliente;
 import com.rensilver.msrelatoriocompras.entity.Compra;

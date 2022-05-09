@@ -1,28 +1,33 @@
-package com.rensilver.msrelatoriocompras.service;
+package com.rensilver.msrelatoriocompras.service.impl;
 
 import com.rensilver.msrelatoriocompras.entity.*;
 import com.rensilver.msrelatoriocompras.service.exception.ResourceNotFoundException;
+import com.rensilver.msrelatoriocompras.service.interfaces.APIConsumerService;
+import com.rensilver.msrelatoriocompras.service.interfaces.ClienteService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.rensilver.msrelatoriocompras.service.validation.ClienteValidation.verificarSeClienteJaComprouVinho;
+
 @Service
-public class ClienteService {
+public class ClienteServiceImpl implements ClienteService {
 
     private final APIConsumerService apiConsumerService;
 
-    public ClienteService(APIConsumerService apiConsumerService) {
+    public ClienteServiceImpl(APIConsumerService apiConsumerService) {
         this.apiConsumerService = apiConsumerService;
     }
 
+    @Override
     public List<ClienteTopDTO> obterClientesFieis() {
         List<ClienteTopDTO> clienteTopDTOList = new ArrayList<>();
         List<Cliente> clientesObtidos = obterClientesComCompras();
         for (Cliente cliente : clientesObtidos) {
             List<Compra> compraList = cliente.getCompras();
             clienteTopDTOList.add(new ClienteTopDTO(
-                    cliente.getNome(), cliente.getCpf(), cliente.getCompras().size(), somarCompras(compraList)
+                    cliente.getNome(), cliente.getCpf(), cliente.getCompras().size(), somarComprasDoCliente(compraList)
             ));
         }
         return clienteTopDTOList.stream()
@@ -31,6 +36,7 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public RecomendacaoVinhoDTO obterRecomendacaoParaCliente(Integer clientId, String tipo) {
         List<Cliente> clientesObtidos = obterClientesComCompras();
         if (verificarSeClienteJaComprouVinho(clientesObtidos, clientId, tipo)) {
@@ -38,7 +44,7 @@ public class ClienteService {
             for (Cliente cliente : clientesObtidos) {
                 if (cliente.getId().equals(clientId)) {
                     List<Compra> compraList = cliente.getCompras();
-                    List<Item> itensList = obterListaItens(compraList);
+                    List<Item> itensList = obterListaItensCompraDoCliente(compraList);
                     recomendacaoVinhoDTO = setarDadosRecomendacaoVinho(itensList, tipo);
                 }
             }
@@ -66,13 +72,13 @@ public class ClienteService {
         return new ArrayList<>(clientesComCompras);
     }
 
-    private double somarCompras(List<Compra> compras) {
+    private double somarComprasDoCliente(List<Compra> compras) {
         return compras.stream()
                     .map(Compra::getValorTotal)
                     .mapToDouble(Double::doubleValue).sum();
     }
 
-    private List<Item> obterListaItens(List<Compra> compraList) {
+    private List<Item> obterListaItensCompraDoCliente(List<Compra> compraList) {
         return compraList.stream()
                         .flatMap(e -> e.getItens()
                         .stream())
@@ -92,19 +98,5 @@ public class ClienteService {
             }
         }
         return recomendacaoVinhoDTO;
-    }
-
-    private boolean verificarSeClienteJaComprouVinho(List<Cliente> clientes, Integer clientId, String tipo) {
-        boolean validaVinho = false;
-        for (Cliente cliente : clientes) {
-            if (cliente.getId().equals(clientId)) {
-                List<Compra> compraList = cliente.getCompras();
-                List<Item> itensList = obterListaItens(compraList);
-                for (Item obterItem : itensList) {
-                    validaVinho = obterItem.getVariedade().equals(tipo);
-                }
-            }
-        }
-        return validaVinho;
     }
 }

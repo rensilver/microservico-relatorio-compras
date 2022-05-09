@@ -1,8 +1,9 @@
-package com.rensilver.msrelatoriocompras.service;
+package com.rensilver.msrelatoriocompras.service.impl;
 
 import com.rensilver.msrelatoriocompras.entity.Cliente;
 import com.rensilver.msrelatoriocompras.entity.Compra;
 import com.rensilver.msrelatoriocompras.service.exception.ExternalAPIConnectionException;
+import com.rensilver.msrelatoriocompras.service.interfaces.APIConsumerService;
 import com.rensilver.msrelatoriocompras.service.validation.ExternalAPIConnectionValidation;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
