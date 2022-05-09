@@ -37,8 +37,10 @@ Java | Spring Boot | Spring Webflux | Spring Cloud | Eureka Server | Spring Clou
 3. Executar primeiro o módulo ms-eureka-server
 4. Executar o módulo ms-api-gateway
 5. Executar o módulo ms-relatorio-compras
-6. Para acessar os endpoints, enviar request com postman ou no browser para o seguinte endereço base: http://localhost:8080/ms-relatorio-compras/<endpoint>
+6. Para acessar os endpoints, enviar request com postman ou no browser para o seguinte endereço base: http://localhost:8080/ms-relatorio-compras/
 
+Exemplo passo 6: http://localhost:8080/ms-relatorio-compras/compras
+    
 ## Eureka Server
 
 Acessar via endereço http://localhost:8761
